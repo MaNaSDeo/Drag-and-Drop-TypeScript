@@ -1,8 +1,14 @@
 import { useState, DragEvent, ReactElement, useRef } from "react";
 import "./DragDropFile.css";
 
+type PdfFiles = {
+  file: File;
+  id: number;
+  size: number;
+};
+
 function DragDropFile(): ReactElement {
-  const [pdfs, setPdfs] = useState<FileList | null>(null);
+  const [pdfs, setPdfs] = useState<PdfFiles[]>();
   const inputRef = useRef<HTMLInputElement>(null);
 
   console.log(pdfs);
@@ -14,7 +20,11 @@ function DragDropFile(): ReactElement {
   function handleDrop(event: DragEvent<HTMLDivElement>): void {
     event.preventDefault();
     if (event.dataTransfer.items) {
-      setPdfs(event.dataTransfer.files);
+      const files = Array.from(event.dataTransfer.files);
+      const pdfFiles = files
+        .filter((file) => file.type === "application/pdf")
+        .map((file, index) => ({ file, id: index, size: file.size }));
+      setPdfs(pdfFiles);
     }
     console.log(event);
   }
@@ -24,18 +34,28 @@ function DragDropFile(): ReactElement {
     console.log("No Upload code present");
   }
 
-  if (pdfs)
+  function handleFileChange(event: React.ChangeEvent<HTMLInputElement>) {
+    if (event.target.files) {
+      const files = Array.from(event.target.files);
+      const pdfFiles = files
+        .filter((file) => file.type === "application/pdf")
+        .map((file, index) => ({ file, id: index, size: file.size })); // Updated line
+      setPdfs(pdfFiles);
+    }
+  }
+
+  if (pdfs?.length)
     return (
       <div>
         <ul>
-          {Array.from(pdfs).map((pdf, index) => (
+          {pdfs.map((pdf, index) => (
             <li key={index}>
-              {pdf.name} {Math.floor(Number(pdf.size) / 1024)} Kb
+              {pdf.file.name} {Math.floor(Number(pdf.size) / 1024)} Kb
             </li>
           ))}
         </ul>
         <div className="actions">
-          <button onClick={() => setPdfs(null)}>Cancel</button>
+          <button onClick={() => setPdfs([])}>Cancel</button>
           <button onClick={handleUpload}>Upload</button>
         </div>
       </div>
@@ -54,14 +74,14 @@ function DragDropFile(): ReactElement {
           <input
             type="file"
             multiple
-            onChange={(event) => setPdfs(event.target.files)}
+            onChange={handleFileChange}
             hidden
             ref={inputRef}
           />
           <button onClick={() => inputRef.current?.click()}>Select Pdf</button>
         </div>
       )}
-      {pdfs && <h1>Hello</h1>}
+      {/* {pdfs && <h1>Hello</h1>} */}
     </div>
   );
 }
