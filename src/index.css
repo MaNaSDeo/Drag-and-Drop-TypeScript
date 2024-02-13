@@ -1,6 +1,7 @@
+@import url("https://fonts.googleapis.com/css2?family=Lato&display=swap");
 /*
   1. Use a more-intuitive box-sizing model.
-*/
+  */
 *,
 *::before,
 *::after {
@@ -52,6 +53,8 @@ h4,
 h5,
 h6 {
   overflow-wrap: break-word;
+  letter-spacing: 1px;
+  text-align: center;
 }
 /*
   8. Create a root stacking context
@@ -59,4 +62,9 @@ h6 {
 #root,
 #__next {
   isolation: isolate;
+}
+
+body {
+  font-family: "Lato", sans-serif;
+  background-color: #f7f7f7;
 }

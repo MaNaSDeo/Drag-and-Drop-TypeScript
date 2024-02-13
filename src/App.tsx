@@ -1,7 +1,10 @@
-import React from "react";
-
+import DragDropFile from "./components/DragDropFile";
 function App() {
-  return <div>App</div>;
+  return (
+    <>
+      <DragDropFile />
+    </>
+  );
 }
 
 export default App;
